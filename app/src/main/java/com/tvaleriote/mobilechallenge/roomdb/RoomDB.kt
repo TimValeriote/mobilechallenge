@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -31,8 +32,25 @@ interface PodcastsDao {
     @Insert
     suspend fun insert(podcast: Podcast)
 
-    @Upsert
-    suspend fun upsert(podcast: Podcast)
+    //Want to ensure the `favorite` column doesnt get changed / reset when upserting
+    //Check if the podcast to be upserted exists or not, if it does then update, if it doesnt, just insert
+    @Transaction
+    suspend fun upsert(podcast: Podcast) {
+        val existingPodcast = getPodcastById(podcast.id)
+        if (existingPodcast != null) {
+            updatePodcastWithoutFavorite(
+                podcast.id, podcast.title, podcast.image, podcast.publisher, podcast.description
+            )
+        } else {
+            insert(podcast)
+        }
+    }
+
+    @Query("UPDATE podcasts SET title = :title, image = :image, publisher = :publisher, description = :description WHERE id = :id")
+    suspend fun updatePodcastWithoutFavorite(id: String, title: String, image: String, publisher: String, description: String)
+
+    @Query("SELECT * FROM podcasts WHERE id = :id")
+    suspend fun getPodcastById(id: String): Podcast?
 
     @Query("UPDATE podcasts SET favorite = 1 WHERE id = :id")
     suspend fun favoritePodcast(id: String)
@@ -64,6 +82,14 @@ object DatabaseManager {
             instance
         }
     }
+
+    val database: RoomDB
+        get() {
+            if (INSTANCE == null) {
+                throw IllegalStateException("Database is not initialized. Make sure to call initialize() first.")
+            }
+            return INSTANCE!!
+        }
 
     fun closeDatabase() {
         INSTANCE?.close()

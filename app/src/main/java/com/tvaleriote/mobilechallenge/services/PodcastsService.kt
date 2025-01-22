@@ -23,8 +23,6 @@ class PodcastsService {
     private val apiURL = "https://listen-api-test.listennotes.com/api/v2/best_podcasts"
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
-
-
     private suspend fun getAllPodcasts(): PodcastResponse? = coroutineScope {
         val request = Request.Builder().url(apiURL).build()
 
@@ -45,7 +43,6 @@ class PodcastsService {
                             Log.e("PodcastsService", "Error parsing JSON: ${e.message}")
                             null
                         }
-
                     }
                 } else {
                     Log.e("PodcastsService", "Error fetching podcasts: HTTP ${response.code}")

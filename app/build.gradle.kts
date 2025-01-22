@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("kapt")
 }
 
 android {
@@ -39,6 +40,8 @@ android {
     }
 }
 
+apply(plugin = "kotlin-kapt")
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -58,10 +61,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.room.runtime)
+    kapt("androidx.room:room-compiler:2.6.1")
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
 
     implementation (libs.okhttp)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
 }
