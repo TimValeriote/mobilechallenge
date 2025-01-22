@@ -11,7 +11,6 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
-import androidx.room.Upsert
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.internal.synchronized
@@ -58,11 +57,14 @@ interface PodcastsDao {
     @Query("UPDATE podcasts SET favorite = 0 WHERE id = :id")
     suspend fun unFavoritePodcast(id: String)
 
-    @Query("SELECT * FROM podcasts")
-    fun getAllPodcastsFlow(): Flow<List<Podcast>>
+    @Query("SELECT * FROM podcasts LIMIT :number")
+    fun getAllPodcastsFlow(number: Int): Flow<List<Podcast>>
 
     @Query("SELECT * FROM podcasts")
     suspend fun getAllPodcasts(): List<Podcast>
+
+    @Query("SELECT COUNT(id) FROM podcasts")
+    suspend fun countTotalPodcasts(): Int
 }
 
 @Database(entities = [Podcast::class], version = 1)

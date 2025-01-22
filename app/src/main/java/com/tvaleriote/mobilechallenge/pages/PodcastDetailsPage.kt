@@ -1,4 +1,4 @@
-package com.tvaleriote.mobilechallenge
+package com.tvaleriote.mobilechallenge.pages
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tvaleriote.mobilechallenge.ImageDisplay
 import com.tvaleriote.mobilechallenge.roomdb.Podcast
 import com.tvaleriote.mobilechallenge.ui.theme.favoriteButtonColor
 import com.tvaleriote.mobilechallenge.ui.theme.favoriteColor

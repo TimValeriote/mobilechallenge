@@ -10,13 +10,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.tvaleriote.mobilechallenge.roomdb.Podcast
@@ -53,11 +60,11 @@ fun PodcastDetailsCard(podcast: Podcast) {
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         )  {
-            Text(
+            AutoSizedText(
                 text = podcast.title,
-                fontSize = 15.sp,
-                fontWeight = FontWeight(650)
+                style = MaterialTheme.typography.bodyLarge,
             )
+
             Text(
                 text = podcast.publisher,
                 fontSize = 12.sp,
@@ -70,4 +77,36 @@ fun PodcastDetailsCard(podcast: Podcast) {
             }
         }
     }
+}
+
+//Custom composable to resize text until it fits in 1 line
+@Composable
+fun AutoSizedText(
+    text: String,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
+) {
+    var textStyle by remember {
+        mutableStateOf(style)
+    }
+
+    val defaultSize = MaterialTheme.typography.bodyLarge.fontSize
+    Text(
+        text = text,
+        fontWeight = FontWeight(650),
+        softWrap = false,
+        style = textStyle,
+        onTextLayout = { result ->
+            if (result.didOverflowWidth) {
+                if (style.fontSize.isUnspecified) {
+                    textStyle = textStyle.copy(
+                        fontSize = defaultSize
+                    )
+                }
+                textStyle = textStyle.copy(
+                    fontSize = textStyle.fontSize * 0.95
+                )
+            }
+        }
+    )
+
 }
