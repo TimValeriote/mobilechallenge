@@ -64,7 +64,7 @@ fun PodcastDetailsCard(podcast: Podcast) {
                 color = publisherColor
             )
             if (podcast.favorite) {
-                Text(text = "Favourited", color = favoriteColor)
+                Text(text = "Favourited", color = favoriteColor, fontSize = 12.sp)
             } else {
                 Text(text = "")
             }

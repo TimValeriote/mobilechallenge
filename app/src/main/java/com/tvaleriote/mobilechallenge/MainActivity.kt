@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
         database = DatabaseManager.getDatabase(this)
         podcastsDao = database.podcastsDao()
 
-        //Fetch all the podcasts and save them to the DB
+        //Fetch all the podcasts and save them to the DB (if there werent already in there)
         lifecycleScope.launch {
             fetchAndSavePodcasts()
         }
@@ -78,13 +78,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             MobilechallengeTheme {
                 var selectedPodcast by remember { mutableStateOf<Podcast?>(null) }
+                val coroutineScope = rememberCoroutineScope()
 
                 Scaffold { paddingValues ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    ) {
+                    Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                        //Track which page we are on in order to display either all podcasts or an individual one
                         when(currentPage.value) {
                             "podcasts" -> PodcastsPage(onPodcastSelected = { podcast ->
                                 selectedPodcast = podcast
@@ -93,7 +91,23 @@ class MainActivity : ComponentActivity() {
                             "podcast" -> selectedPodcast?.let {
                                 PodcastDetailsPage(onBackSelected = {
                                     currentPage.value = "podcasts"
-                                }, podcast = it)
+                                }, podcast = it, onPodcastFavorited = { podcastId ->
+                                    //When the user favorites the podcasts, save that to the DB and reload the selected podcast so the button changes displaying its favorited
+                                    run {
+                                        coroutineScope.launch {
+                                            database.podcastsDao().favoritePodcast(podcastId)
+                                            selectedPodcast = database.podcastsDao().getPodcastById(podcastId)
+                                        }
+                                    }
+                                }, onPodcastUnfavorited = { podcastId ->
+                                    //When the user un-favorites the podcast, do the same as before but in reverse
+                                    run {
+                                        coroutineScope.launch {
+                                            database.podcastsDao().unFavoritePodcast(podcastId)
+                                            selectedPodcast = database.podcastsDao().getPodcastById(podcastId)
+                                        }
+                                    }
+                                })
                             }
                         }
                     }

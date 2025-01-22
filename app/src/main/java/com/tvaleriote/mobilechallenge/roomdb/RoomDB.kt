@@ -55,6 +55,9 @@ interface PodcastsDao {
     @Query("UPDATE podcasts SET favorite = 1 WHERE id = :id")
     suspend fun favoritePodcast(id: String)
 
+    @Query("UPDATE podcasts SET favorite = 0 WHERE id = :id")
+    suspend fun unFavoritePodcast(id: String)
+
     @Query("SELECT * FROM podcasts")
     fun getAllPodcastsFlow(): Flow<List<Podcast>>
 

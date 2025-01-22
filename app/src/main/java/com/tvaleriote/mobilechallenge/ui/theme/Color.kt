@@ -11,5 +11,6 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val publisherColor = Color(0xFF5E5E5E)
-val favoriteColor = Color(0xFFBD2121)
-val dividerColor = Color(0xFFA9A9A9)
+val favoriteColor = Color(0xFFCB3030)
+val dividerColor = Color(0xFFC2C2C2)
+val favoriteButtonColor = Color(0xFF363636)
